@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plāna rats — Mans nākotnes plāns, 7.–9. klase</title>
+<style>
+:root{
+  --v1:#9381FF; --v2:#B8B8FF; --fons:#F8F7FF; --pers:#FFEEDD; --pers2:#FFD8BE;
+  --teksts:#352C6B; --vid:#5E568F; --robeza:#DDD9FB; --balts:#ffffff;
+  --zals:#2F7D53; --zals-f:#E3F4EA; --oranzs:#B4541A;
+}
+*{box-sizing:border-box;}
+[hidden]{display:none !important;}
+html,body{margin:0;padding:0;height:100%;}
+body{background:#E7E4FA;font-family:Candara,Aptos,'Segoe UI',Corbel,sans-serif;color:var(--teksts);overflow:hidden;
+  -webkit-user-select:none;user-select:none;}
+#vieta{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+#skatuve{position:absolute;left:0;top:0;width:1600px;height:900px;background:var(--fons);transform-origin:0 0;overflow:hidden;
+  box-shadow:0 10px 40px rgba(53,44,107,.18);}
+button{font-family:inherit;color:inherit;cursor:pointer;}
+button:focus-visible{outline:3px solid var(--teksts);outline-offset:2px;}
+
+/* galvene */
+.galvene{position:absolute;left:0;top:0;right:0;height:100px;display:flex;align-items:center;gap:22px;padding:0 40px;
+  border-bottom:3px solid var(--robeza);background:var(--fons);}
+.galvene .apli{width:118px;height:52px;flex-shrink:0;}
+.galvene h1{margin:0;font-size:36px;font-weight:700;letter-spacing:.01em;line-height:1.05;}
+.galvene .apaksvirsr{margin:5px 0 0;font-size:17px;color:var(--vid);letter-spacing:.02em;}
+.cilnes{margin-left:auto;display:flex;gap:10px;}
+.cilne{font-size:20px;border:3px solid var(--v2);background:var(--balts);border-radius:30px;padding:12px 26px;min-height:56px;font-weight:700;}
+.cilne[aria-selected="true"]{background:var(--v1);border-color:var(--v1);color:var(--teksts);box-shadow:inset 0 -4px 0 rgba(53,44,107,.25);}
+.cilne .nr{display:inline-block;width:30px;height:30px;line-height:30px;border-radius:50%;background:var(--fons);margin-right:8px;font-size:17px;text-align:center;}
+
+/* darba laukums */
+#darbs{position:absolute;left:0;right:0;top:100px;bottom:56px;padding:22px 40px 18px;}
+.panelis{display:none;height:100%;}
+.panelis.aktivs{display:block;animation:paradit .25s ease-out;}
+@keyframes paradit{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.pamaciba{margin:0 0 16px;font-size:20px;color:var(--vid);line-height:1.35;}
+.pamaciba b{color:var(--teksts);}
+
+/* kāje */
+.kaje{position:absolute;left:0;right:0;bottom:0;height:56px;display:flex;align-items:center;padding:0 40px;
+  border-top:2px solid var(--robeza);font-size:16px;color:var(--vid);background:var(--fons);}
+#pilnekrans{position:absolute;right:18px;bottom:8px;z-index:60;font-size:16px;font-weight:700;border:2px solid var(--v2);
+  background:var(--balts);border-radius:22px;padding:8px 18px 8px 14px;min-height:40px;display:flex;align-items:center;gap:9px;}
+#pilnekrans:hover{border-color:var(--v1);}
+#pilnekrans svg{width:20px;height:20px;}
+
+/* pogas */
+.poga{font-size:21px;font-weight:700;border-radius:14px;padding:13px 26px;min-height:58px;border:3px solid var(--teksts);
+  background:var(--teksts);color:#fff;}
+.poga:hover{filter:brightness(1.15);}
+.poga.otra{background:var(--balts);color:var(--teksts);border-color:var(--v2);}
+.poga.otra:hover{border-color:var(--v1);filter:none;}
+.poga.persiks{background:var(--pers2);border-color:var(--pers2);color:var(--teksts);}
+.poga:disabled{opacity:.45;cursor:default;filter:none;}
+
+.lodzins{background:var(--balts);border:3px solid var(--robeza);border-radius:20px;padding:20px 24px;}
+.secinajums{background:var(--pers);border-left:8px solid var(--pers2);border-radius:14px;padding:16px 22px;font-size:19px;line-height:1.45;}
+.secinajums b{color:var(--teksts);}
+
+/* sākumekrāns */
+#sakums{position:absolute;inset:0;z-index:50;background:var(--fons);display:flex;align-items:center;justify-content:center;}
+#sakums.paslepts{display:none;}
+#lietus{position:absolute;inset:0;width:1600px;height:900px;display:block;}
+.sakuma-karte{position:relative;z-index:2;width:760px;background:rgba(255,255,255,.94);border:3px solid var(--v2);border-radius:30px;
+  padding:44px 56px 46px;text-align:center;box-shadow:0 24px 60px rgba(53,44,107,.22);}
+.sakuma-karte .ikona{width:120px;height:120px;margin:0 auto 14px;}
+.sakuma-karte .temats{font-size:18px;color:var(--vid);letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px;}
+.sakuma-karte h2{margin:0 0 14px;font-size:50px;line-height:1.05;}
+.sakuma-karte p{margin:0 0 30px;font-size:23px;line-height:1.4;color:var(--vid);}
+.sakuma-karte .poga{font-size:26px;padding:16px 64px;border-radius:40px;}
+
+
+
+.maza{font-size:16px;color:var(--vid);line-height:1.4;margin:10px 0;}
+/* 1. rats */
+.rats-rezgis{display:grid;grid-template-columns:1fr 600px;gap:26px;height:644px;}
+.rats-ramis{position:relative;isolation:isolate;border-radius:20px;overflow:hidden;border:3px solid var(--robeza);
+  background:radial-gradient(ellipse at 50% 60%, #ffffff 0%, #EFEDFF 70%);touch-action:none;cursor:grab;}
+.rats-ramis.velk{cursor:grabbing;}
+.rats-centrs{position:absolute;left:50%;top:42%;width:0;height:0;}
+.moneta{position:absolute;left:0;top:0;cursor:pointer;will-change:transform,opacity;}
+.moneta-disks{position:relative;width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;box-shadow:0 12px 26px rgba(53,44,107,.28), inset 0 0 0 3px rgba(255,255,255,.35);}
+.moneta-disks .spid{position:absolute;inset:-25%;opacity:.45;mix-blend-mode:screen;
+  background:conic-gradient(from 0deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,.55) 60deg, rgba(255,255,255,0) 130deg, rgba(255,255,255,0) 250deg, rgba(255,255,255,.3) 300deg, rgba(255,255,255,0) 360deg);}
+.moneta-disks svg{position:relative;z-index:2;width:46%;height:46%;}
+.moneta-nos{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-weight:700;color:var(--teksts);pointer-events:none;}
+.moneta.izv .moneta-disks{box-shadow:0 14px 30px rgba(53,44,107,.35), 0 0 0 6px #fff, 0 0 0 10px var(--teksts);}
+.rats-vadiba{position:absolute;right:16px;bottom:16px;display:flex;gap:10px;z-index:300;}
+.rats-vadiba .poga{font-size:18px;min-height:50px;padding:9px 20px;}
+.bloka-panelis{display:flex;flex-direction:column;}
+.bloka-panelis .solis{font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:var(--vid);font-weight:700;}
+.bloka-panelis .nos{font-size:40px;font-weight:700;margin:6px 0 2px;display:flex;align-items:center;gap:14px;}
+.bloka-panelis .nos i{width:22px;height:22px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.bloka-panelis .jaut{font-size:22px;color:var(--vid);margin:0 0 16px;}
+.bloka-panelis ul{margin:0;padding-left:24px;font-size:21px;line-height:1.45;}
+.bloka-panelis li{margin-bottom:10px;}
+.bloka-panelis .secinajums{margin-top:auto;}
+.bloka-panelis .ievads{font-size:21px;line-height:1.5;margin:0 0 16px;}
+/* 2. spēle */
+.spele-rezgis{display:grid;grid-template-columns:1fr 360px;gap:24px;height:644px;}
+.spele-galvena{position:relative;min-width:0;}
+.iestatisana{max-width:820px;padding:30px 34px;}
+.iestatisana .poga{font-size:23px;}
+.iestatisana .maza{font-size:19px;margin:16px 0 22px;}
+.iestatisana h3,.beigas h3,.punkti h3{margin:0 0 16px;font-size:32px;}
+.beigas .secinajums{font-size:23px;}
+.kom-izvele{display:flex;gap:12px;margin-bottom:6px;}
+.kom-izvele .poga[aria-pressed="true"]{background:var(--v1);border-color:var(--v1);color:var(--teksts);}
+.apg-karte{background:var(--teksts);color:#fff;border-radius:22px;padding:26px 36px;height:270px;display:flex;flex-direction:column;}
+.apg-augsa{display:flex;justify-content:space-between;align-items:center;font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--v2);font-weight:700;}
+.kartas{background:var(--pers2);color:var(--teksts);border-radius:20px;padding:6px 18px;letter-spacing:.02em;text-transform:none;font-size:19px;}
+.apg-teksts{margin:auto 0;font-size:40px;line-height:1.28;font-weight:700;}
+.dalu-pogas{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px;}
+.dala{display:flex;align-items:center;gap:16px;font-size:26px;font-weight:700;background:#fff;border:3px solid var(--robeza);border-radius:16px;
+  padding:12px 18px;min-height:100px;text-align:left;}
+.dala:hover:not(:disabled){border-color:var(--v1);}
+.dala i{width:54px;height:54px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.dala i svg{width:30px;height:30px;}
+.dala:disabled{cursor:default;opacity:.55;}
+.dala.pareizi{opacity:1;border-color:var(--zals);background:var(--zals-f);}
+.dala.izveleta-kluda{opacity:1;border-color:var(--oranzs);background:var(--pers);}
+.atgriez{display:flex;gap:18px;align-items:center;margin-top:16px;background:var(--pers);border-left:8px solid var(--pers2);border-radius:14px;padding:14px 20px;}
+.atg-teksts{flex:1;font-size:21px;line-height:1.4;}
+.atg-teksts b{font-size:23px;}
+.atgriez .poga{flex-shrink:0;}
+.beigas{padding:30px 34px;}
+.beigas p{font-size:28px;line-height:1.45;}
+.punkti{display:flex;flex-direction:column;}
+.komanda{display:flex;align-items:center;gap:10px;border:3px solid var(--robeza);border-radius:16px;padding:10px 12px;margin-bottom:10px;}
+.komanda.aktiva{border-color:var(--teksts);background:var(--fons);}
+.komanda .kn{flex:1;font-size:21px;font-weight:700;}
+.komanda .kp{font-size:32px;font-weight:700;min-width:44px;text-align:center;}
+.komanda button{width:40px;height:40px;border-radius:50%;border:2px solid var(--v2);background:#fff;font-size:22px;font-weight:700;line-height:1;padding:0;}
+.punkti #noJauna{margin-top:auto;}
+.pm-pogas{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;}
+.pm{display:flex;align-items:center;justify-content:center;gap:18px;font-size:46px;font-weight:700;letter-spacing:.04em;border:4px solid var(--robeza);border-radius:20px;min-height:210px;background:#fff;}
+.pm span{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;color:#fff;}
+.pm[data-v="1"] span{background:var(--zals);}
+.pm[data-v="0"] span{background:var(--oranzs);}
+.pm:hover:not(:disabled){border-color:var(--v1);}
+.pm:disabled{cursor:default;opacity:.45;}
+.pm.pareizi{opacity:1;border-color:var(--zals);background:var(--zals-f);}
+.pm.izveleta-kluda{opacity:1;border-color:var(--oranzs);background:var(--pers);}
+.pm-dala{display:inline-flex;align-items:center;gap:8px;margin-left:8px;font-weight:700;font-size:18px;background:#fff;border-radius:20px;padding:3px 12px 3px 4px;vertical-align:middle;}
+.pm-dala i{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;}
+.pm-dala i svg{width:16px;height:16px;}
+
+</style>
+</head>
+<body>
+<div id="vieta"><div id="skatuve">
+  <header class="galvene">
+    <svg class="apli" viewBox="0 0 118 52" aria-hidden="true"><circle cx="26" cy="26" r="24" fill="#9381FF" opacity=".9"/><circle cx="50" cy="26" r="24" fill="#B8B8FF" opacity=".9"/><circle cx="74" cy="26" r="24" fill="#FFD8BE" opacity=".95"/><circle cx="96" cy="26" r="20" fill="#FFEEDD"/></svg>
+    <div><h1>Plāna rats</h1><p class="apaksvirsr">Audzināšana un karjeras izglītība · 7.–9. klase · Mans nākotnes plāns</p></div>
+    <nav class="cilnes" role="tablist"><button class="cilne" role="tab" data-p="p1" aria-selected="true"><span class="nr">1</span>Plāna rats</button><button class="cilne" role="tab" data-p="p2" aria-selected="false"><span class="nr">2</span>Patiesība vai mīts?</button></nav>
+  </header>
+  <main id="darbs">
+<section class="panelis aktivs" id="p1">
+  <p class="pamaciba">Noklikšķiniet uz monētas, lai apskatītu vienu plāna daļu. Ratu var pagriezt arī ar pirkstu vai peli.</p>
+  <div class="rats-rezgis">
+    <div class="rats-ramis" id="ramis">
+      <div class="rats-centrs" id="rats"></div>
+      <div class="rats-vadiba">
+        <button class="poga otra" id="ratsPauze" type="button">Apturēt ratu</button>
+        <button class="poga" id="ratsTalak" type="button">Nākamā daļa →</button>
+      </div>
+    </div>
+    <div class="lodzins bloka-panelis" id="blokaPanelis"></div>
+  </div>
+</section>
+
+<section class="panelis" id="p2">
+  <p class="pamaciba"><b>Komandas pēc kārtas</b> izlasa apgalvojumu un izlemj: tā ir patiesība vai mīts? Par pareizu atbildi komanda saņem 1 punktu.</p>
+  <div class="spele-rezgis">
+    <div class="spele-galvena">
+      <div class="lodzins iestatisana" id="iestatisana">
+        <h3>Cik komandu spēlē?</h3>
+        <div class="kom-izvele" id="komIzvele">
+          <button class="poga otra" data-k="2" aria-pressed="false">2 komandas</button>
+          <button class="poga otra" data-k="3" aria-pressed="true">3 komandas</button>
+          <button class="poga otra" data-k="4" aria-pressed="false">4 komandas</button>
+        </div>
+        <p class="maza">Ieteikums: klasi sadaliet komandās pa rindām vai galdiem. Katrā gājienā pie tāfeles nāk cits komandas pārstāvis.</p>
+        <button class="poga" id="sāktSpēli">Sākt spēli</button>
+      </div>
+      <div class="spele" id="spele" hidden>
+        <div class="apg-karte">
+          <div class="apg-augsa"><span id="apgNr"></span><span class="kartas" id="kartas"></span></div>
+          <div class="apg-teksts" id="apgTeksts"></div>
+        </div>
+        <div class="pm-pogas" id="pmPogas"><button class="pm" type="button" data-v="1"><span>✓</span>Patiesība</button><button class="pm" type="button" data-v="0"><span>✗</span>Mīts</button></div>
+        <div class="atgriez" id="atgriez" hidden>
+          <div class="atg-teksts" id="atgTeksts"></div>
+          <button class="poga" id="nakamais">Nākamais apgalvojums →</button>
+        </div>
+      </div>
+      <div class="beigas lodzins" id="beigas" hidden>
+        <h3>Spēle beigusies!</h3>
+        <p id="beiguTeksts"></p>
+        <div class="secinajums"><b>Sarunai:</b> kurš mīts jums šķita visticamākais un kāpēc? Kura plāna daļa jums šķiet visnepieciešamākā?</div>
+      </div>
+    </div>
+    <div class="punkti lodzins">
+      <h3>Punkti</h3>
+      <div id="tablo"><p class="maza">Punkti parādīsies, kad sāksiet spēli.</p></div>
+      <p class="maza">Ja vajag, skolotājs punktus labo ar «+» un «−».</p>
+      <button class="poga otra" id="noJauna">Sākt no jauna</button>
+    </div>
+  </div>
+</section>
+
+  </main>
+  <footer class="kaje">Interaktīvo rīku sagatavoja pedagoģe karjeras konsultante Jolanta Grosberga-Gernere</footer>
+  <div id="sakums">
+    <canvas id="lietus" aria-hidden="true"></canvas>
+    <div class="sakuma-karte">
+      <div class="ikona"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="40" fill="none" stroke="#352C6B" stroke-width="6"/><circle cx="60" cy="20" r="12" fill="#9381FF" stroke="#352C6B" stroke-width="4"/><circle cx="95" cy="80" r="12" fill="#FFD8BE" stroke="#352C6B" stroke-width="4"/><circle cx="25" cy="80" r="12" fill="#B8B8FF" stroke="#352C6B" stroke-width="4"/><circle cx="60" cy="60" r="9" fill="#352C6B"/></svg></div>
+      <p class="temats">Mans nākotnes plāns · 7.–9. klase</p>
+      <h2>Plāna rats</h2>
+      <p>Izpētiet karjeras plāna sešas daļas un komandās noskaidrojiet, kas par plānošanu ir patiesība un kas — mīts.</p>
+      <button class="poga" id="sakt">Sākt</button>
+    </div>
+  </div>
+  <button id="pilnekrans" type="button"></button>
+</div></div>
+<script>
+/* ---------- skatuves mērogošana ---------- */
+const SKATUVE = document.getElementById('skatuve');
+let MĒROGS = 1;
+function mērogot(){
+  const w = window.innerWidth, h = window.innerHeight;
+  MĒROGS = Math.min(w/1600, h/900);
+  SKATUVE.style.transform = 'scale('+MĒROGS+')';
+  SKATUVE.style.left = ((w - 1600*MĒROGS)/2)+'px';
+  SKATUVE.style.top  = ((h - 900*MĒROGS)/2)+'px';
+}
+window.addEventListener('resize', mērogot);
+mērogot();
+
+/* ---------- pilnekrāns ---------- */
+(function(){
+  const b = document.getElementById('pilnekrans');
+  const ikonaAtvērt = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+  const ikonaAizvērt = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+  function atjaunot(){
+    const ir = !!document.fullscreenElement;
+    b.innerHTML = (ir ? ikonaAizvērt : ikonaAtvērt) + '<span>' + (ir ? 'Iziet no pilnekrāna režīma' : 'Atvērt pilnekrāna režīmu') + '</span>';
+  }
+  b.addEventListener('click', ()=>{
+    if(document.fullscreenElement){ document.exitFullscreen && document.exitFullscreen(); }
+    else { const el = document.documentElement; (el.requestFullscreen || el.webkitRequestFullscreen || function(){}).call(el); }
+  });
+  document.addEventListener('fullscreenchange', ()=>{ atjaunot(); setTimeout(mērogot, 60); });
+  atjaunot();
+})();
+
+/* ---------- cilnes ---------- */
+function cilnes(pēcPārslēgšanas){
+  const pogas = document.querySelectorAll('.cilne');
+  pogas.forEach(b=>b.addEventListener('click', ()=>atvērtCilni(b.dataset.p)));
+  window.atvērtCilni = function(id){
+    pogas.forEach(x=>x.setAttribute('aria-selected', x.dataset.p===id ? 'true':'false'));
+    document.querySelectorAll('.panelis').forEach(x=>x.classList.toggle('aktivs', x.id===id));
+    if(pēcPārslēgšanas) pēcPārslēgšanas(id);
+  };
+}
+
+/* ---------- sākumekrāns: burtu lietus ---------- */
+(function(){
+  const sākums = document.getElementById('sakums');
+  const audekls = document.getElementById('lietus');
+  const ctx = audekls.getContext('2d', {alpha:false});
+  const W = 1600, H = 900;
+  const FONS = '#F8F7FF', KRĀSA = '#9381FF', IZCEL = '#352C6B';
+  const BURTI = Array.from('AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ0123456789');
+  const FONTS = 26, BLĪVUMS = 0.8, ĀTRUMS = 0.5, ASTE = 0.9, MIRDZ = 3;
+  const kolPlatums = FONTS / BLĪVUMS;
+  const rindas = Math.ceil(H / FONTS);
+  const rādītājs = {aktīvs:false, x:0, y:0};
+  let kolonnas = [], kadrs, pēdējais = performance.now(), pagājis = 0, uzkrāts = 0;
+  const mazāk = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function nejauši(s){ const v = Math.sin(s*12.9898+78.233)*43758.5453; return v-Math.floor(v); }
+  function jaunaKolonna(i){ const s = i*47.17+11.3; return {galva:1.5-nejauši(s+2.4)*10.5, sēkla:s, ātrums:9+nejauši(s+5.7)*11}; }
+  function burts(s){ return BURTI[Math.floor(nejauši(s)*BURTI.length)] || 'A'; }
+
+  function iestatīt(){
+    const k = Math.min((window.devicePixelRatio||1)*MĒROGS, 2);
+    audekls.width = Math.round(W*k); audekls.height = Math.round(H*k);
+    ctx.setTransform(k,0,0,k,0,0);
+    const sk = Math.ceil(W/kolPlatums)+1;
+    kolonnas = Array.from({length:sk}, (_,i)=>jaunaKolonna(i));
+    ctx.fillStyle = FONS; ctx.fillRect(0,0,W,H);
+  }
+  function fonts(){ ctx.font = '600 '+FONTS+'px Consolas, "Courier New", monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; }
+
+  function nekustīgs(){
+    ctx.globalAlpha = 1; ctx.fillStyle = FONS; ctx.fillRect(0,0,W,H); fonts();
+    kolonnas.forEach((k,i)=>{
+      const x = i*kolPlatums + kolPlatums/2;
+      const garums = 8 + Math.floor(nejauši(k.sēkla+8)*14);
+      const galva = 4 + Math.floor(nejauši(k.sēkla+3)*rindas);
+      for(let o=0;o<garums;o++){
+        const r = galva-o, y = r*FONTS; if(y<-FONTS||y>H+FONTS) continue;
+        const p = o/Math.max(garums-1,1);
+        ctx.globalAlpha = Math.pow(1-p,2.2)*0.8;
+        ctx.fillStyle = o===0 ? IZCEL : KRĀSA;
+        ctx.fillText(burts(k.sēkla+r*2.73), x, y);
+      }
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function solis(dt){
+    const rādiuss = Math.max(84, FONTS*7.5);
+    ctx.globalAlpha = (1-ASTE)*0.5; ctx.fillStyle = FONS; ctx.fillRect(0,0,W,H); fonts();
+    kolonnas.forEach((k,i)=>{
+      k.galva += k.ātrums*ĀTRUMS*dt;
+      if(k.galva > rindas+4){
+        const n = jaunaKolonna(i + Math.floor(pagājis*0.01));
+        k.galva = -4 - nejauši(n.sēkla+9)*rindas*0.5; k.sēkla = n.sēkla; k.ātrums = n.ātrums;
+      }
+      const x = i*kolPlatums + kolPlatums/2, y = Math.floor(k.galva)*FONTS;
+      const dx = x-rādītājs.x, dy = y-rādītājs.y, att = Math.hypot(dx,dy);
+      const ietekme = rādītājs.aktīvs ? Math.max(0, 1-att/rādiuss) : 0;
+      const nobīde = att>0 ? (dx/att)*ietekme*7 : 0;
+      const b = burts(k.sēkla + Math.floor(k.galva)*2.73 + pagājis*0.0041);
+      ctx.globalAlpha = 0.8 + ietekme*0.2; ctx.fillStyle = KRĀSA; ctx.shadowColor = KRĀSA; ctx.shadowBlur = MIRDZ*(0.7+ietekme*0.5);
+      ctx.fillText(b, x+nobīde, y);
+      ctx.globalAlpha = 0.35 + ietekme*0.5; ctx.fillStyle = IZCEL; ctx.shadowBlur = 0;
+      ctx.fillText(b, x+nobīde, y);
+    });
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  }
+
+  function cikls(t){
+    const dt = Math.min((t-pēdējais)/1000, 0.05); pēdējais = t; pagājis += dt*1000; uzkrāts += dt;
+    if(uzkrāts >= 0.05){ solis(uzkrāts); uzkrāts = 0; }
+    kadrs = requestAnimationFrame(cikls);
+  }
+  function sākt(){
+    if(kadrs || mazāk.matches || sākums.classList.contains('paslepts') || document.hidden) return;
+    pēdējais = performance.now(); kadrs = requestAnimationFrame(cikls);
+  }
+  function apturēt(){ if(kadrs){ cancelAnimationFrame(kadrs); kadrs = null; } }
+
+  sākums.addEventListener('pointermove', e=>{
+    const r = audekls.getBoundingClientRect();
+    rādītājs.aktīvs = true; rādītājs.x = (e.clientX-r.left)/MĒROGS; rādītājs.y = (e.clientY-r.top)/MĒROGS;
+  });
+  sākums.addEventListener('pointerleave', ()=>{ rādītājs.aktīvs = false; });
+  document.addEventListener('visibilitychange', ()=>{ document.hidden ? apturēt() : sākt(); });
+  mazāk.addEventListener && mazāk.addEventListener('change', ()=>{ if(mazāk.matches){ apturēt(); nekustīgs(); } else sākt(); });
+  window.addEventListener('resize', ()=>{ iestatīt(); if(mazāk.matches) nekustīgs(); });
+
+  iestatīt();
+  if(mazāk.matches) nekustīgs(); else { solis(0); sākt(); }
+
+  document.getElementById('sakt').addEventListener('click', ()=>{
+    sākums.classList.add('paslepts'); apturēt();
+    if(window.pēcSākuma) window.pēcSākuma();
+  });
+  window.rādītSākumu = function(){ sākums.classList.remove('paslepts'); sākt(); };
+})();
+
+
+/* =========================================================
+   PLĀNA DAĻAS (kopīgas abām cilnēm)
+   ========================================================= */
+const BLOKI = [
+ {n:'Es šodien', j:'Ko es par sevi zinu?', k:'#5B4FCF',
+  ic:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/>',
+  s:['Intereses — kas mani aizrauj arī tad, kad neviens to neprasa.',
+     'Prasmes — ko es jau protu ne tikai mācību priekšmetos, bet arī ikdienas darbos.',
+     'Vērtības — kam darbā man būs nozīme: stabilitātei, brīvībai, jēgai vai atalgojumam.',
+     'Mācību rezultāti — kuros mācību priekšmetos man veicas un kuros būs jāpiestrādā.'],
+  p:'Bez šīs daļas mērķi izvēlas pēc citu cilvēku mērauklas, nevis pēc savas.'},
+ {n:'Mērķis', j:'Kur es gribu nokļūt?', k:'#D9622B',
+  ic:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/>',
+  s:['Konkrēts rezultāts, nevis vispārīga vēlme.',
+     'Termiņš — līdz kuram brīdim tam ir jābūt izdarītam.',
+     'Pierādījums — pēc kā es redzēšu, ka mērķis ir sasniegts.',
+     'Mērķis, kura sasniegšanu galvenokārt ietekmēju es pats, nevis citi.'],
+  p:'Mērķis bez termiņa un bez pierādījuma paliek vēlēšanās.'},
+ {n:'Ceļš', j:'Kā es tur nokļūšu?', k:'#2F8F6A',
+  ic:'<path d="M4 20L20 4"/><path d="M9 4h11v11"/>',
+  s:['Izglītība — vidusskola, ģimnāzija, tehnikums, arodizglītība, mākslas vai mūzikas vidusskola.',
+     'Pieredze — ēnošana, brīvprātīgais darbs, vasaras darbs, skolēnu mācību uzņēmums.',
+     'Cilvēki — kurš var pastāstīt par profesiju, ieteikt vai parādīt savu darbu.',
+     'Laiks — kas un kurā mācību gada mēnesī ir jāizdara.'],
+  p:'Uz vienu un to pašu mērķi parasti ved vairāki ceļi. Ir vērts zināt vismaz divus.'},
+ {n:'Šķēršļi', j:'Kas var traucēt?', k:'#B8407A',
+  ic:'<path d="M12 3l9 16H3z"/><path d="M12 10v4.5"/><path d="M12 17.2v.2"/>',
+  s:['Iekšējie šķēršļi: motivācijas trūkums, bailes kļūdīties, darbu atlikšana uz vēlāku laiku.',
+     'Ārējie šķēršļi: mācību rezultāti, attālums līdz izglītības iestādei, ģimenes finansiālās iespējas, konkurss uz vietām.',
+     'Katram šķērslim — vismaz viena rīcība, ko var veikt jau tagad.',
+     'B plāns nav atkāpšanās; tas ir otrs ceļš uz to pašu mērķi.'],
+  p:'Plāns, kurā paredzēts tikai viens iznākums, sabrūk pie pirmās neveiksmes.'},
+ {n:'Pirmais solis', j:'Ko es izdaru šonedēļ?', k:'#2E6FB7',
+  ic:'<path d="M4 12h14"/><path d="M13 6l6 6-6 6"/>',
+  s:['Viena neliela darbība, kas aizņem ne vairāk kā stundu.',
+     'Tā ir jāizdara šonedēļ, nevis „kādreiz”.',
+     'Piemēri: atvērt kādas skolas tīmekļvietni, uzrakstīt jautājumu skolotājam, parunāt mājās.',
+     'Ja pirmais solis šķiet par lielu, sadali to divās daļās.'],
+  p:'Plāns sākas nevis ar lēmumu, bet ar pirmo paveikto darbību.'},
+ {n:'Pārskatīšana', j:'Kad es plānu pārrakstīšu?', k:'#8A6326',
+  ic:'<path d="M20 12a8 8 0 11-2.6-5.9"/><path d="M20 4v5h-5"/>',
+  s:['Nosaki datumu, kad plānu izlasīsi vēlreiz, piemēram, semestra beigās.',
+     'Pārbaudi, vai mērķis joprojām ir tavs, nevis tikai pierasts.',
+     'Pieraksti, kas jau ir paveikts — tas ir pierādījums, ka plāns darbojas.',
+     'Izmaiņas nav neveiksme. Ja plāns pēc gada nav mainījies, parasti tas nozīmē, ka pie tā neviens nav strādājis.'],
+  p:'Plāns ir dzīvs dokuments. To pārraksta, kad mainās mērķis, rezultāti vai apstākļi.'}
+];
+function ikona(b, krāsa){ return '<svg viewBox="0 0 24 24" fill="none" stroke="'+(krāsa||'#fff')+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+b.ic+'</svg>'; }
+function tonis(h,d){
+  const r=parseInt(h.substr(1,2),16),g=parseInt(h.substr(3,2),16),b=parseInt(h.substr(5,2),16);
+  const c=v=>Math.max(0,Math.min(255,v+d));
+  return 'rgb('+c(r)+','+c(g)+','+c(b)+')';
+}
+
+/* =========================================================
+   1. PLĀNA RATS
+   ========================================================= */
+const rāmis = document.getElementById('ramis'), ratsEl = document.getElementById('rats');
+let monētas = [], leņķis = 0, izvēlēts = -1, pauze = false, mērķleņķis = null, pēd = 0,
+    velk = false, lejā = false, kustējies = false, pX = 0, sākX = 0, inerce = 0, ratsAktīvs = false, ratsKadrs = null;
+
+BLOKI.forEach((b,i)=>{
+  const d = document.createElement('div'); d.className = 'moneta';
+  d.innerHTML = '<div class="moneta-disks" style="background:radial-gradient(circle at 32% 26%, '+tonis(b.k,60)+' 0%, '+b.k+' 55%, '+tonis(b.k,-40)+' 100%);">'+
+    '<div class="spid"></div>'+ikona(b)+'</div><div class="moneta-nos">'+b.n+'</div>';
+  d.addEventListener('click', e=>{ e.stopPropagation(); if(kustējies) return; izvēlies(i); });
+  ratsEl.appendChild(d); monētas.push(d);
+});
+function normē(a){ while(a>Math.PI) a-=2*Math.PI; while(a<-Math.PI) a+=2*Math.PI; return a; }
+function izvēlies(i){
+  izvēlēts = i; pauze = true; mērķleņķis = Math.PI/2 - i*2*Math.PI/BLOKI.length;
+  document.getElementById('ratsPauze').textContent = 'Palaist ratu';
+  panelis(BLOKI[i]); monētas.forEach((m,j)=>m.classList.toggle('izv', j===i));
+}
+document.getElementById('ratsPauze').addEventListener('click', function(){
+  if(pauze){ pauze=false; mērķleņķis=null; izvēlēts=-1; monētas.forEach(m=>m.classList.remove('izv')); this.textContent='Apturēt ratu'; panelis(null); }
+  else { pauze=true; mērķleņķis=null; this.textContent='Palaist ratu'; }
+});
+document.getElementById('ratsTalak').addEventListener('click', ()=>izvēlies((izvēlēts+1+BLOKI.length)%BLOKI.length));
+
+function panelis(b){
+  const e = document.getElementById('blokaPanelis');
+  if(!b){
+    e.innerHTML = '<div class="solis">Karjeras plāna sešas daļas</div><div class="nos">Plāna rats</div>'+
+      '<p class="ievads">Karjeras plāns ir dokuments par to, kur tu esi šodien, kur vēlies nokļūt un ko darīsi, lai tur nokļūtu.</p>'+
+      '<p class="ievads">Rats griežas, jo plāna daļas ir saistītas: kad mainās viena, mainās arī pārējās.</p>'+
+      '<div class="secinajums"><b>Ieteikums:</b> vispirms apskatiet visas sešas daļas un tikai pēc tam pildiet darba lapas 1. sadaļu.</div>';
+    return;
+  }
+  const nr = BLOKI.indexOf(b)+1;
+  e.innerHTML = '<div class="solis">'+nr+'. daļa no '+BLOKI.length+'</div>'+
+    '<div class="nos"><i style="background:'+b.k+'"></i>'+b.n+'</div><p class="jaut">'+b.j+'</p>'+
+    '<ul>'+b.s.map(t=>'<li>'+t+'</li>').join('')+'</ul><div class="secinajums">'+b.p+'</div>';
+}
+panelis(null);
+
+function ratsZīmē(t){
+  let dt = (t-pēd)/1000; pēd = t; if(!isFinite(dt)||dt<0) dt = 0; if(dt>0.05) dt = 0.05;
+  if(mērķleņķis!==null) leņķis += normē(mērķleņķis-leņķis)*0.14;
+  else if(!pauze && !velk) leņķis += 0.26*dt;
+  if(!velk && mērķleņķis===null && Math.abs(inerce)>0.0002){ leņķis += inerce; inerce *= 0.93; }
+  const W = rāmis.clientWidth, H = rāmis.clientHeight;
+  const R = Math.min(W*0.36, H*0.62), Rv = R*0.42, izm = Math.max(80, Math.min(R*0.52, 150)), n = BLOKI.length;
+  for(let i=0;i<n;i++){
+    const a = leņķis + i*2*Math.PI/n, dz = Math.sin(a), x = R*Math.cos(a), y = Rv*dz;
+    const s = 0.62 + 0.38*(dz+1)/2, m = monētas[i], w = izm*s;
+    m.style.width = w+'px'; m.style.height = w+'px';
+    m.style.transform = 'translate('+(x-w/2)+'px,'+(y-w/2)+'px)';
+    m.style.opacity = (0.5+0.5*(dz+1)/2).toFixed(3);
+    m.style.zIndex = Math.round((dz+1)*100);
+    const nos = m.querySelector('.moneta-nos');
+    nos.style.top = (w+6)+'px'; nos.style.fontSize = (15+6*s)+'px'; nos.style.opacity = dz>0.1 ? 1 : 0.45;
+    m.querySelector('.spid').style.transform = 'rotate('+(((t/22)+i*57)%360)+'deg)';
+  }
+  ratsKadrs = ratsAktīvs ? requestAnimationFrame(ratsZīmē) : null;
+}
+function ratsSākt(){ if(ratsKadrs) return; ratsAktīvs = true; ratsKadrs = requestAnimationFrame(t=>{ pēd=t; ratsZīmē(t); }); }
+function ratsApturēt(){ ratsAktīvs = false; if(ratsKadrs){ cancelAnimationFrame(ratsKadrs); ratsKadrs = null; } }
+
+rāmis.addEventListener('pointerdown', e=>{
+  if(e.target.closest('.rats-vadiba')) return;
+  lejā = true; kustējies = false; pX = e.clientX; sākX = e.clientX; inerce = 0;
+});
+window.addEventListener('pointermove', e=>{
+  if(!lejā) return;
+  if(!kustējies && Math.abs(e.clientX-sākX)>6){ kustējies = true; velk = true; mērķleņķis = null; rāmis.classList.add('velk'); }
+  if(!velk) return;
+  const d = (e.clientX-pX)*0.006/MĒROGS; pX = e.clientX; leņķis += d; inerce = d;
+});
+window.addEventListener('pointerup', ()=>{ lejā = false; velk = false; rāmis.classList.remove('velk'); setTimeout(()=>{ kustējies = false; }, 0); });
+
+/* =========================================================
+   2. PATIESĪBA VAI MĪTS? — komandu spēle
+   v: true = patiesība, false = mīts; d — saistītās plāna daļas indekss BLOKI masīvā
+   ========================================================= */
+const APGALVOJUMI = [
+ {t:'Karjeras plānu uzraksta vienreiz, un tas vairs nemainās.', v:false, d:5, p:'Plāns ir dzīvs dokuments. To pārraksta, kad mainās mērķis, rezultāti vai apstākļi.'},
+ {t:'Uz vienu mērķi var vest vairāki ceļi.', v:true, d:2, p:'Piemēram, uz vienu profesiju var nonākt caur ģimnāziju un augstskolu vai caur tehnikumu.'},
+ {t:'Ja tev ir B plāns, tas nozīmē, ka netici savam mērķim.', v:false, d:3, p:'B plāns nav atkāpšanās. Tas ir otrs ceļš uz to pašu mērķi.'},
+ {t:'Mērķim vajag termiņu — līdz kuram brīdim tas jāizdara.', v:true, d:1, p:'Bez termiņa darbu var atlikt bezgalīgi. Mērķim ir trīs daļas: darbība, termiņš un pierādījums.'},
+ {t:'„Gribu labi mācīties” jau ir pilnīgs mērķis.', v:false, d:1, p:'Tā ir vēlēšanās. Tai trūkst konkrētas darbības, termiņa un pierādījuma.'},
+ {t:'Pirmais solis var būt mazs, piemēram, atvērt vienas skolas tīmekļvietni.', v:true, d:4, p:'Labs pirmais solis aizņem ne vairāk kā stundu, un to izdara šonedēļ.'},
+ {t:'Plānot ir vērts tikai tad, kad precīzi zini, par ko gribi kļūt.', v:false, d:0, p:'Pirmais mērķis var būt noskaidrot. „Vēl nezinu” ir derīga atbilde, ja tai seko plāns.'},
+ {t:'Intereses, prasmes un vērtības palīdz izvēlēties mērķi.', v:true, d:0, p:'Tā ir daļa «Es šodien». Bez tās mērķi izvēlas pēc citu cilvēku mērauklas.'},
+ {t:'Ja ceļā rodas šķērslis, tātad mērķis ir izvēlēts nepareizi.', v:false, d:3, p:'Šķēršļi gadās gandrīz katrā plānā. Katram var atrast vismaz vienu rīcību.'},
+ {t:'Darbu atlikšana uz pēdējo brīdi ir iekšējs šķērslis.', v:true, d:3, p:'Iekšējie šķēršļi ir saistīti ar mūsu ieradumiem. Tos var mainīt pats, piemēram, ar mācīšanās grafiku.'},
+ {t:'Plānu pārskata tikai tad, ja kaut kas ir nogājis greizi.', v:false, d:5, p:'Plānu pārskata arī noteiktā datumā, piemēram, semestra beigās, pat ja viss iet labi.'},
+ {t:'Ja mērķis pēc pusgada mainās, tas ir normāli.', v:true, d:5, p:'Pusaudža gados domu maiņa ir normāla. Svarīgi ir pārbaudīt jauno izvēli, nevis mainīt to akli.'}
+];
+
+let komandas = 3, punkti = [], kārta = 0, secība = [], idx = 0, atbildēts = false;
+const tablo = document.getElementById('tablo');
+
+document.querySelectorAll('#komIzvele .poga').forEach(b=>b.addEventListener('click', ()=>{
+  document.querySelectorAll('#komIzvele .poga').forEach(x=>x.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true'); komandas = Number(b.dataset.k);
+}));
+function jaukt(a){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+
+const pmPogas = document.getElementById('pmPogas');
+pmPogas.querySelectorAll('.pm').forEach(btn=>btn.addEventListener('click', ()=>atbildēt(btn.dataset.v==='1', btn)));
+
+function zīmētTablo(){
+  tablo.innerHTML = punkti.map((p,i)=>'<div class="komanda'+(i===kārta && !document.getElementById('spele').hidden ? ' aktiva':'')+'">'+
+    '<span class="kn">'+(i+1)+'. komanda</span><button data-i="'+i+'" data-d="-1" aria-label="Noņemt punktu">−</button>'+
+    '<span class="kp">'+p+'</span><button data-i="'+i+'" data-d="1" aria-label="Pievienot punktu">+</button></div>').join('');
+  tablo.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{
+    const i = Number(b.dataset.i); punkti[i] = Math.max(0, punkti[i]+Number(b.dataset.d)); zīmētTablo();
+  }));
+}
+function rādītApgalvojumu(){
+  const a = secība[idx]; atbildēts = false;
+  document.getElementById('apgNr').textContent = 'Apgalvojums '+(idx+1)+' no '+secība.length;
+  document.getElementById('kartas').textContent = 'Atbild '+(kārta+1)+'. komanda';
+  document.getElementById('apgTeksts').textContent = a.t;
+  pmPogas.querySelectorAll('.pm').forEach(b=>{ b.disabled = false; b.classList.remove('pareizi','izveleta-kluda'); });
+  document.getElementById('atgriez').hidden = true;
+  zīmētTablo();
+}
+function atbildēt(v, btn){
+  if(atbildēts) return; atbildēts = true;
+  const a = secība[idx], pareizi = v===a.v, b = BLOKI[a.d];
+  pmPogas.querySelectorAll('.pm').forEach(x=>{ x.disabled = true; if((x.dataset.v==='1')===a.v) x.classList.add('pareizi'); });
+  if(!pareizi) btn.classList.add('izveleta-kluda');
+  if(pareizi) punkti[kārta]++;
+  document.getElementById('atgTeksts').innerHTML = (pareizi ? '<b>Pareizi! +1 punkts '+(kārta+1)+'. komandai.</b> ' :
+    '<b>Gandrīz!</b> Tā ir '+(a.v ? 'patiesība' : 'mīts')+'. ') + a.p +
+    '<span class="pm-dala"><i style="background:'+b.k+'">'+ikona(b)+'</i>Plāna daļa: '+b.n+'</span>';
+  const nāk = document.getElementById('nakamais');
+  nāk.textContent = idx===secība.length-1 ? 'Skatīt rezultātus →' : 'Nākamais apgalvojums →';
+  document.getElementById('atgriez').hidden = false;
+  zīmētTablo();
+}
+document.getElementById('nakamais').addEventListener('click', ()=>{
+  if(idx===secība.length-1){ beigas(); return; }
+  idx++; kārta = (kārta+1)%komandas; rādītApgalvojumu();
+});
+function beigas(){
+  document.getElementById('spele').hidden = true;
+  const kopā = punkti.reduce((a,b)=>a+b,0), maks = Math.max(...punkti);
+  const labākās = punkti.map((p,i)=>p===maks ? (i+1)+'.' : null).filter(Boolean);
+  document.getElementById('beiguTeksts').innerHTML = 'Pareizās atbildes visām komandām kopā: <b>'+kopā+' no '+secība.length+'</b>. '+
+    (labākās.length>1 ? 'Visvairāk punktu ieguva '+labākās.join(' un ')+' komanda.' : 'Visvairāk punktu ieguva '+labākās[0]+' komanda.');
+  document.getElementById('beigas').hidden = false; zīmētTablo();
+}
+document.getElementById('sāktSpēli').addEventListener('click', ()=>{
+  punkti = Array(komandas).fill(0); kārta = 0; idx = 0; secība = jaukt(APGALVOJUMI);
+  document.getElementById('iestatisana').hidden = true; document.getElementById('beigas').hidden = true;
+  document.getElementById('spele').hidden = false; rādītApgalvojumu();
+});
+document.getElementById('noJauna').addEventListener('click', ()=>{
+  punkti = []; document.getElementById('spele').hidden = true; document.getElementById('beigas').hidden = true;
+  document.getElementById('iestatisana').hidden = false;
+  tablo.innerHTML = '<p class="maza">Punkti parādīsies, kad sāksiet spēli.</p>';
+});
+
+/* ---------- cilnes un sākums ---------- */
+cilnes(id=>{ id==='p1' ? ratsSākt() : ratsApturēt(); });
+window.pēcSākuma = ()=>ratsSākt();
+
+</script>
+</body>
+</html>
