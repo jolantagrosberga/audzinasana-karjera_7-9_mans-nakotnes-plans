@@ -75,6 +75,31 @@ button:focus-visible{outline:3px solid var(--teksts);outline-offset:2px;}
 
 
 
+/* sākumekrāns: zvaigžņots fons + monētu rats (7.–9. bloka palete) */
+#sakums{background:#241D52;
+  background-image:
+    radial-gradient(circle at 16% 14%, rgba(147,129,255,.50) 0, transparent 360px),
+    radial-gradient(circle at 86% 20%, rgba(184,184,255,.36) 0, transparent 400px),
+    radial-gradient(circle at 74% 90%, rgba(255,216,190,.30) 0, transparent 380px),
+    radial-gradient(circle at 8% 84%, rgba(255,238,221,.22) 0, transparent 330px),
+    radial-gradient(circle at 50% 50%, #3F3480 0%, #241D52 74%);
+  overflow:hidden;}
+#sakums::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(16,12,40,.45) 100%);}
+#zvaigznes{position:absolute;inset:0;pointer-events:none;}
+#zvaigznes i{position:absolute;border-radius:50%;background:#fff;box-shadow:0 0 6px rgba(255,255,255,.8);
+  animation:mirgo 4s ease-in-out infinite;}
+@keyframes mirgo{0%,100%{opacity:.25;}50%{opacity:1;}}
+#sakRats{position:absolute;left:800px;top:450px;width:0;height:0;z-index:1;pointer-events:none;}
+.sak-moneta{position:absolute;left:0;top:0;will-change:transform,opacity;}
+.sak-disks{position:relative;width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  box-shadow:0 16px 36px rgba(10,6,30,.55), inset 0 0 0 3px rgba(255,255,255,.35);}
+.sak-spid{position:absolute;inset:-25%;opacity:.5;mix-blend-mode:screen;
+  background:conic-gradient(from 0deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,.6) 60deg, rgba(255,255,255,0) 130deg, rgba(255,255,255,0) 250deg, rgba(255,255,255,.35) 300deg, rgba(255,255,255,0) 360deg);}
+.sak-disks svg{position:relative;z-index:2;width:46%;height:46%;}
+#sakums .sakuma-karte{z-index:150;border-color:#B8B8FF;box-shadow:0 30px 80px rgba(10,6,30,.55);}
+@media (prefers-reduced-motion: reduce){ #zvaigznes i{animation:none;opacity:.7;} }
+
 .maza{font-size:16px;color:var(--vid);line-height:1.4;margin:10px 0;}
 /* 1. rats */
 .rats-rezgis{display:grid;grid-template-columns:1fr 600px;gap:26px;height:644px;}
@@ -217,7 +242,7 @@ button:focus-visible{outline:3px solid var(--teksts);outline-offset:2px;}
   </main>
   <footer class="kaje">Interaktīvo rīku sagatavoja pedagoģe karjeras konsultante Jolanta Grosberga-Gernere</footer>
   <div id="sakums">
-    <canvas id="lietus" aria-hidden="true"></canvas>
+    <div id="zvaigznes" aria-hidden="true"></div><div id="sakRats" aria-hidden="true"></div>
     <div class="sakuma-karte">
       <div class="ikona"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="40" fill="none" stroke="#352C6B" stroke-width="6"/><circle cx="60" cy="20" r="12" fill="#9381FF" stroke="#352C6B" stroke-width="4"/><circle cx="95" cy="80" r="12" fill="#FFD8BE" stroke="#352C6B" stroke-width="4"/><circle cx="25" cy="80" r="12" fill="#B8B8FF" stroke="#352C6B" stroke-width="4"/><circle cx="60" cy="60" r="9" fill="#352C6B"/></svg></div>
       <p class="temats">Mans nākotnes plāns · 7.–9. klase</p>
@@ -270,96 +295,67 @@ function cilnes(pēcPārslēgšanas){
   };
 }
 
-/* ---------- sākumekrāns: burtu lietus ---------- */
+/* ---------- sākumekrāns: zvaigžņots fons + griežams monētu rats (bloka paletē) ---------- */
 (function(){
   const sākums = document.getElementById('sakums');
-  const audekls = document.getElementById('lietus');
-  const ctx = audekls.getContext('2d', {alpha:false});
-  const W = 1600, H = 900;
-  const FONS = '#F8F7FF', KRĀSA = '#9381FF', IZCEL = '#352C6B';
-  const BURTI = Array.from('AĀBCČDEĒFGĢHIĪJKĶLĻMNŅOPRSŠTUŪVZŽ0123456789');
-  const FONTS = 26, BLĪVUMS = 0.8, ĀTRUMS = 0.5, ASTE = 0.9, MIRDZ = 3;
-  const kolPlatums = FONTS / BLĪVUMS;
-  const rindas = Math.ceil(H / FONTS);
-  const rādītājs = {aktīvs:false, x:0, y:0};
-  let kolonnas = [], kadrs, pēdējais = performance.now(), pagājis = 0, uzkrāts = 0;
+  const zv = document.getElementById('zvaigznes');
+  const ratsEl = document.getElementById('sakRats');
   const mazāk = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  function nejauši(s){ const v = Math.sin(s*12.9898+78.233)*43758.5453; return v-Math.floor(v); }
-  function jaunaKolonna(i){ const s = i*47.17+11.3; return {galva:1.5-nejauši(s+2.4)*10.5, sēkla:s, ātrums:9+nejauši(s+5.7)*11}; }
-  function burts(s){ return BURTI[Math.floor(nejauši(s)*BURTI.length)] || 'A'; }
-
-  function iestatīt(){
-    const k = Math.min((window.devicePixelRatio||1)*MĒROGS, 2);
-    audekls.width = Math.round(W*k); audekls.height = Math.round(H*k);
-    ctx.setTransform(k,0,0,k,0,0);
-    const sk = Math.ceil(W/kolPlatums)+1;
-    kolonnas = Array.from({length:sk}, (_,i)=>jaunaKolonna(i));
-    ctx.fillStyle = FONS; ctx.fillRect(0,0,W,H);
+  /* zvaigznes — fiksēts izkārtojums, lēna mirgošana */
+  function nej(s){ const v = Math.sin(s*12.9898+78.233)*43758.5453; return v-Math.floor(v); }
+  let zh = '';
+  for(let i=0;i<90;i++){
+    const x = nej(i+1)*1600, y = nej(i+51)*900, r = 1 + nej(i+101)*2.2, d = 2.5 + nej(i+151)*4, a = nej(i+201)*-6;
+    zh += '<i style="left:'+x.toFixed(0)+'px;top:'+y.toFixed(0)+'px;width:'+r.toFixed(1)+'px;height:'+r.toFixed(1)+'px;animation-duration:'+d.toFixed(1)+'s;animation-delay:'+a.toFixed(1)+'s"></i>';
   }
-  function fonts(){ ctx.font = '600 '+FONTS+'px Consolas, "Courier New", monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; }
+  zv.innerHTML = zh;
 
-  function nekustīgs(){
-    ctx.globalAlpha = 1; ctx.fillStyle = FONS; ctx.fillRect(0,0,W,H); fonts();
-    kolonnas.forEach((k,i)=>{
-      const x = i*kolPlatums + kolPlatums/2;
-      const garums = 8 + Math.floor(nejauši(k.sēkla+8)*14);
-      const galva = 4 + Math.floor(nejauši(k.sēkla+3)*rindas);
-      for(let o=0;o<garums;o++){
-        const r = galva-o, y = r*FONTS; if(y<-FONTS||y>H+FONTS) continue;
-        const p = o/Math.max(garums-1,1);
-        ctx.globalAlpha = Math.pow(1-p,2.2)*0.8;
-        ctx.fillStyle = o===0 ? IZCEL : KRĀSA;
-        ctx.fillText(burts(k.sēkla+r*2.73), x, y);
-      }
-    });
-    ctx.globalAlpha = 1;
+  /* monētas — karjeras plāna sešas daļas */
+  const M = [
+    {k:'#9381FF', ic:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/>'},
+    {k:'#FFD8BE', ic:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/>'},
+    {k:'#B8B8FF', ic:'<path d="M4 20L20 4"/><path d="M9 4h11v11"/>'},
+    {k:'#FFEEDD', ic:'<path d="M12 3l9 16H3z"/><path d="M12 10v4.5"/><path d="M12 17.2v.2"/>'},
+    {k:'#7B68EE', ic:'<path d="M4 12h14"/><path d="M13 6l6 6-6 6"/>'},
+    {k:'#F4B98F', ic:'<path d="M20 12a8 8 0 11-2.6-5.9"/><path d="M20 4v5h-5"/>'}
+  ];
+  function tonis(h,d){ const r=parseInt(h.substr(1,2),16),g=parseInt(h.substr(3,2),16),b=parseInt(h.substr(5,2),16); const c=v=>Math.max(0,Math.min(255,v+d)); return 'rgb('+c(r)+','+c(g)+','+c(b)+')'; }
+  const monētas = M.map(m=>{
+    const d = document.createElement('div'); d.className = 'sak-moneta';
+    d.innerHTML = '<div class="sak-disks" style="background:radial-gradient(circle at 32% 26%, '+tonis(m.k,55)+' 0%, '+m.k+' 55%, '+tonis(m.k,-45)+' 100%);">'+
+      '<div class="sak-spid"></div><svg viewBox="0 0 24 24" fill="none" stroke="#352C6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+m.ic+'</svg></div>';
+    ratsEl.appendChild(d); return d;
+  });
+
+  let leņķis = 0.4, kadrs = null, pēd = 0;
+  function zīmēt(t){
+    const n = monētas.length, R = 700, Rv = 345, izm = 160;
+    for(let i=0;i<n;i++){
+      const a = leņķis + i*2*Math.PI/n, dz = Math.sin(a), x = R*Math.cos(a), y = Rv*dz;
+      const s = 0.55 + 0.45*(dz+1)/2, w = izm*s, m = monētas[i];
+      m.style.width = w+'px'; m.style.height = w+'px';
+      m.style.transform = 'translate('+(x-w/2)+'px,'+(y-w/2)+'px)';
+      m.style.opacity = (0.45+0.55*(dz+1)/2).toFixed(3);
+      m.style.zIndex = Math.round((dz+1)*100);
+      m.firstChild.firstChild.style.transform = 'rotate('+(((t||0)/22+i*57)%360)+'deg)';
+    }
   }
-
-  function solis(dt){
-    const rādiuss = Math.max(84, FONTS*7.5);
-    ctx.globalAlpha = (1-ASTE)*0.5; ctx.fillStyle = FONS; ctx.fillRect(0,0,W,H); fonts();
-    kolonnas.forEach((k,i)=>{
-      k.galva += k.ātrums*ĀTRUMS*dt;
-      if(k.galva > rindas+4){
-        const n = jaunaKolonna(i + Math.floor(pagājis*0.01));
-        k.galva = -4 - nejauši(n.sēkla+9)*rindas*0.5; k.sēkla = n.sēkla; k.ātrums = n.ātrums;
-      }
-      const x = i*kolPlatums + kolPlatums/2, y = Math.floor(k.galva)*FONTS;
-      const dx = x-rādītājs.x, dy = y-rādītājs.y, att = Math.hypot(dx,dy);
-      const ietekme = rādītājs.aktīvs ? Math.max(0, 1-att/rādiuss) : 0;
-      const nobīde = att>0 ? (dx/att)*ietekme*7 : 0;
-      const b = burts(k.sēkla + Math.floor(k.galva)*2.73 + pagājis*0.0041);
-      ctx.globalAlpha = 0.8 + ietekme*0.2; ctx.fillStyle = KRĀSA; ctx.shadowColor = KRĀSA; ctx.shadowBlur = MIRDZ*(0.7+ietekme*0.5);
-      ctx.fillText(b, x+nobīde, y);
-      ctx.globalAlpha = 0.35 + ietekme*0.5; ctx.fillStyle = IZCEL; ctx.shadowBlur = 0;
-      ctx.fillText(b, x+nobīde, y);
-    });
-    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-  }
-
   function cikls(t){
-    const dt = Math.min((t-pēdējais)/1000, 0.05); pēdējais = t; pagājis += dt*1000; uzkrāts += dt;
-    if(uzkrāts >= 0.05){ solis(uzkrāts); uzkrāts = 0; }
+    let dt = (t-pēd)/1000; pēd = t; if(!isFinite(dt)||dt<0) dt = 0; if(dt>0.05) dt = 0.05;
+    leņķis += 0.16*dt; zīmēt(t);
     kadrs = requestAnimationFrame(cikls);
   }
   function sākt(){
     if(kadrs || mazāk.matches || sākums.classList.contains('paslepts') || document.hidden) return;
-    pēdējais = performance.now(); kadrs = requestAnimationFrame(cikls);
+    pēd = performance.now(); kadrs = requestAnimationFrame(cikls);
   }
   function apturēt(){ if(kadrs){ cancelAnimationFrame(kadrs); kadrs = null; } }
 
-  sākums.addEventListener('pointermove', e=>{
-    const r = audekls.getBoundingClientRect();
-    rādītājs.aktīvs = true; rādītājs.x = (e.clientX-r.left)/MĒROGS; rādītājs.y = (e.clientY-r.top)/MĒROGS;
-  });
-  sākums.addEventListener('pointerleave', ()=>{ rādītājs.aktīvs = false; });
   document.addEventListener('visibilitychange', ()=>{ document.hidden ? apturēt() : sākt(); });
-  mazāk.addEventListener && mazāk.addEventListener('change', ()=>{ if(mazāk.matches){ apturēt(); nekustīgs(); } else sākt(); });
-  window.addEventListener('resize', ()=>{ iestatīt(); if(mazāk.matches) nekustīgs(); });
+  mazāk.addEventListener && mazāk.addEventListener('change', ()=>{ if(mazāk.matches){ apturēt(); zīmēt(0); } else sākt(); });
 
-  iestatīt();
-  if(mazāk.matches) nekustīgs(); else { solis(0); sākt(); }
+  zīmēt(0); sākt();
 
   document.getElementById('sakt').addEventListener('click', ()=>{
     sākums.classList.add('paslepts'); apturēt();
@@ -367,6 +363,7 @@ function cilnes(pēcPārslēgšanas){
   });
   window.rādītSākumu = function(){ sākums.classList.remove('paslepts'); sākt(); };
 })();
+
 
 
 /* =========================================================
